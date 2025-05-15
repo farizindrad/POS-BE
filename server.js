@@ -9,7 +9,8 @@ const cors = require("cors");
 // }));
 
 const allowedOrigins = [
-    "https://pos.otisrohman.my.id"
+    "https://pos.otisrohman.my.id",
+    "https://pos-frontend-beta.vercel.app"
   ];
   
   const allowedMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
@@ -22,17 +23,19 @@ const allowedOrigins = [
       return res.status(403).json({ message: "Forbidden: Invalid Origin" });
     }
   
-    if (!allowedMethods.includes(method)) {
-      return res.status(405).json({ message: `Method ${method} Not Allowed` });
-    }
-  
     if (origin) {
       res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Methods", allowedMethods.join(","));
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    }
+  
+    // Tangani preflight (OPTIONS)
+    if (method === "OPTIONS") {
+      return res.sendStatus(200);
     }
   
     next();
   });
-  
 
 const upload = require("./middlewares/upload");
 const { createProduct, getAllProducts, getProductById } = require("./controllers/productController");
